@@ -2,6 +2,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const asyncHandler = require('express-async-handler');
 const User = require('../models/userModel');
+const streamifier = require('streamifier');
+const cloudinary = require('cloudinary').v2;
 
 const signToken = id => {
     return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -27,35 +29,28 @@ const createSendResToken = (user, statusCode, res) => {
 }
 
 const registerUser = asyncHandler(async (req, res) => {
-    const isOwner = (await User.count()) === 0;
+    const userCount = await User.count();
+    console.log('Total users:', userCount);
+
+    const isOwner = userCount === 0;
     const role = isOwner ? 'admin' : 'client';
 
-    const newUser = await User.create({
-        nip_karyawan: req.body.nip_karyawan,
-        password: req.body.password,
-        role: role,
-        nama_lengkap: req.body.nama_lengkap,
-        email: req.body.email,
-        gender: req.body.gender,
-        tanggal_lahir: req.body.tanggal_lahir,
-        tempat_lahir: req.body.tempat_lahir,
-        nomor_telepon: req.body.nomor_telepon,
-        id_jabatan: req.body.id_jabatan,
-        alamat: req.body.alamat
-    });
+    req.body.role = role;
+
+    const newUser = await User.create(req.body);
 
     createSendResToken(newUser, 201, res);
 });
 
 const loginUser = asyncHandler(async (req, res) => {
     const { nip_karyawan, password } = req.body;
-    if(!nip_karyawan || !password) {
+    if (!nip_karyawan || !password) {
         res.status(400)
         throw new Error('Username dan Password dibutuhkan')
     }
-    const userFound = await User.findOne({ where: { nip_karyawan }});
+    const userFound = await User.findOne({ where: { nip_karyawan } });
 
-    if(userFound && (await userFound.comparePassword(password))) {
+    if (userFound && (await userFound.comparePassword(password))) {
         createSendResToken(userFound, 200, res);
     } else {
         res.status(401)
@@ -66,11 +61,11 @@ const loginUser = asyncHandler(async (req, res) => {
 const logoutUser = asyncHandler(async (req, res) => {
     res.cookie('jwt', "", {
         httpOnly: true,
-        expires : new Date(Date.now())
+        expires: new Date(Date.now())
     })
-    res.status(200).json({ 
-        success: true, 
-        message: 'User Berhasil Logout' 
+    res.status(200).json({
+        success: true,
+        message: 'User Berhasil Logout'
     })
 });
 
@@ -93,11 +88,11 @@ const updateUser = asyncHandler(async (req, res) => {
     const nipKaryawan = req.params.nip_karyawan || req.body.nip_karyawan;
     const userFound = await User.findByPk(nipKaryawan);
     const allowedFields = [];
-    const isAdmin = await User.findOne({ where: { role: 'admin', nip_karyawan : req.user.nip_karyawan } });
-    if (!isAdmin && req.user.nip_karyawan!== nipKaryawan) {
-        allowedFields.push('password', 'nama_lengkap', 'gender', 'alamat', 'nomor_telepon', 'tanggal_lahir', 'tempat_lahir')
+    const isAdmin = await User.findOne({ where: { role: 'admin', nip_karyawan: req.user.nip_karyawan } });
+    if (!isAdmin && req.user.nip_karyawan !== nipKaryawan) {
+        allowedFields.push('password', 'nama_lengkap', 'gender', 'alamat', 'nomor_telepon', 'photo', 'tanggal_lahir', 'tempat_lahir')
     } else {
-        allowedFields.push('password', 'nama_lengkap', 'email', 'gender', 'tanggal_lahir', 'tempat_lahir', 'nomor_telepon', 'id_jabatan', 'alamat')
+        allowedFields.push('password', 'nama_lengkap', 'email', 'gender', 'tanggal_lahir', 'tempat_lahir', 'nomor_telepon', 'id_jabatan', 'alamat', 'photo')
     }
     const updateData = {};
 
@@ -124,4 +119,25 @@ const getAllUsers = asyncHandler(async (req, res) => {
     })
 })
 
-module.exports = { registerUser, loginUser, getUserById, logoutUser, getAllUsers, updateUser };
+const uploadPhoto = asyncHandler(async (req, res) => {
+    const stream = cloudinary.uploader.upload_stream({
+        folder: "profile",
+        allowed_formats: ['jpg', 'png', 'jpeg'],
+
+    },
+        function (err, result) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'gagal upload gambar !',
+                    error: err
+                });
+            }
+            res.json({
+                message: 'Berhasil upload gambar!',
+                url: result.secure_url,
+            })
+        })
+    streamifier.createReadStream(req.file.buffer).pipe(stream);
+})
+
+module.exports = { registerUser, loginUser, getUserById, logoutUser, getAllUsers, updateUser, uploadPhoto };

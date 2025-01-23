@@ -6,6 +6,7 @@ const User = sequelize.define('User', {
     nip_karyawan: {
         type: DataTypes.STRING(50),
         allowNull: false,
+        unique: [true, 'NIP karyawan sudah terdaftar'],
         primaryKey: true,
     },
     password: {
@@ -30,11 +31,13 @@ const User = sequelize.define('User', {
     },
     nama_lengkap: {
         type: DataTypes.STRING(50),
+        unique: [true, 'Nama lengkap sudah terdaftar'],
         allowNull: false,
     },
     email: {
         type: DataTypes.STRING(50),
         allowNull: false,
+        unique: [true, 'Email sudah terdaftar'],
         validate: {
             isEmail: true,
         },
@@ -42,6 +45,8 @@ const User = sequelize.define('User', {
     gender: {
         type: DataTypes.STRING(12),
         allowNull: true,
+        defaultValue: 'Pria',
+        enum : ['Pria', 'Wanita'],
     },
     tanggal_lahir: {
         type: DataTypes.DATEONLY,
@@ -54,6 +59,7 @@ const User = sequelize.define('User', {
     nomor_telepon: {
         type: DataTypes.STRING(50),
         allowNull: false,
+        unique: [true, 'Nomor telepon sudah terdaftar'],
         validate: {
             isNumeric: true,
         },
@@ -65,6 +71,11 @@ const User = sequelize.define('User', {
     alamat: {
         type: DataTypes.TEXT,
         allowNull: false,
+    },
+    photo: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+        defaultValue: null,
     },
 }, {
     tableName: 'users',
