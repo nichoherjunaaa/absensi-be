@@ -1,32 +1,43 @@
 const { DataTypes } = require('sequelize');
+const sequelize = require('../config/sqlConnect'); 
+const User = require('../models/userModel'); // Import model User
 
-const Attendance = sequalize.define('Attendance', {
-    id : {
+const Attendance = sequelize.define('Attendance', {
+    id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
     },
-    tanggal: {
-        type: DataTypes.DATEONLY,
+    nip_karyawan: {
+        type: DataTypes.STRING(50),
         allowNull: false,
+        references: {
+            model: User, 
+            key: 'nip_karyawan', 
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+    },
+    tanggal: {
+        type: DataTypes.DATE, 
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
     },
     status: {
         type: DataTypes.STRING(20),
         allowNull: false,
+        defaultValue: 'tanpa keterangan',
+        validate: {
+            isIn: [['hadir', 'tanpa keterangan', 'izin']], 
+        },
     },
-    created_at: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        defaultValue: DataTypes.NOW,
-    },
-    surat_izin : {
+    surat_izin: {
         type: DataTypes.STRING(255),
         allowNull: true,
     }
 }, {
     tableName: 'attendance',
     timestamps: true,
-    createdAt: 'created_at',
 });
 
 module.exports = Attendance;

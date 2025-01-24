@@ -4,9 +4,10 @@ const cookieParser = require('cookie-parser')
 const PORT = process.env.PORT || 3001
 const sqlConnection = require('./config/sqlConnect')
 const { notFound, errorHandler } = require('./middleware/errorHandler')
-const authRouter = require('./route/authRoute')
 const cloudinary = require('cloudinary').v2;
 const app = express()
+const authRouter = require('./route/authRoute')
+const attendanceRouter = require('./route/attendanceRoute')
 
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -25,6 +26,7 @@ app.get('/', (req, res) => {
 })
 
 app.use('/api/v1/auth', authRouter)
+app.use('/api/v1/attendance', attendanceRouter)
 app.use(notFound)
 app.use(errorHandler)
 
