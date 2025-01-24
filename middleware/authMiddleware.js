@@ -33,7 +33,6 @@ const isAdmin = (req, res, next) => {
         throw new Error('Not authenticated, please log in');
         return;
     }
-
     if (req.user.role === 'admin') {
         next(); 
     } else {

@@ -1,13 +1,22 @@
 const { Op } = require('sequelize'); // Impor operator dari Sequelize
 const Attendance = require('../models/attendanceModel');
+const User = require('../models/userModel');
 const asyncHandler = require('express-async-handler');
 
 const createAttendance = asyncHandler(async (req, res) => {
-    const { status, nip_karyawan, surat_izin } = req.body;
+    const { status, surat_izin } = req.body;
+
+    const { nip_karyawan } = req.user
 
     if (!status || !nip_karyawan) {
         res.status(400);
         throw new Error('Status dan NIP Karyawan diperlukan');
+    }
+
+    const userFound = await User.findByPk(nip_karyawan);
+    if (!userFound) {
+        res.status(404);
+        throw new Error('Karyawan tidak ditemukan');
     }
 
     const today = new Date().toISOString().split('T')[0];
@@ -16,8 +25,8 @@ const createAttendance = asyncHandler(async (req, res) => {
         where: {
             nip_karyawan,
             createdAt: {
-                [Op.gte]: new Date(`${today}T00:00:00.000Z`), // Mulai dari awal hari ini
-                [Op.lt]: new Date(`${today}T23:59:59.999Z`)  // Sampai akhir hari ini
+                [Op.gte]: new Date(`${today}T00:00:00.000Z`),
+                [Op.lt]: new Date(`${today}T23:59:59.999Z`)
             }
         }
     });
@@ -39,4 +48,12 @@ const createAttendance = asyncHandler(async (req, res) => {
     });
 });
 
-module.exports = { createAttendance };
+const getAllAttendance = asyncHandler(async (req, res) => {
+    const allAttendance = await Attendance.findAll();
+    res.status(200).json({
+        success: true,
+        data: allAttendance
+    });
+});
+
+module.exports = { createAttendance, getAllAttendance };
