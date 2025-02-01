@@ -28,7 +28,7 @@ const Attendance = sequelize.define('Attendance', {
         allowNull: false,
         defaultValue: 'tanpa keterangan',
         validate: {
-            isIn: [['hadir', 'tanpa keterangan', 'izin']], 
+            isIn: [['hadir', 'tanpa keterangan', 'izin', 'terlambat']], 
         },
     },
     surat_izin: {

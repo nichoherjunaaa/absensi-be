@@ -39,7 +39,10 @@ const registerUser = asyncHandler(async (req, res) => {
 
     const newUser = await User.create(req.body);
 
-    createSendResToken(newUser, 201, res);
+    res.status(201).json({
+        success: true,
+        data: newUser
+    });
 });
 
 const loginUser = asyncHandler(async (req, res) => {
@@ -70,7 +73,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 });
 
 const getUserById = asyncHandler(async (req, res) => {
-    const nipKaryawan = req.body.nip_karyawan;
+    const nipKaryawan = req.user.nip_karyawan;
 
     const userFound = await User.findByPk(nipKaryawan, {
         attributes: { exclude: ['password'] }
@@ -85,7 +88,7 @@ const getUserById = asyncHandler(async (req, res) => {
 });
 
 const updateUser = asyncHandler(async (req, res) => {
-    const nipKaryawan = req.params.nip_karyawan || req.body.nip_karyawan;
+    const nipKaryawan = req.user.nip_karyawan || req.body.nip_karyawan;
     const userFound = await User.findByPk(nipKaryawan);
     const allowedFields = [];
     const isAdmin = await User.findOne({ where: { role: 'admin', nip_karyawan: req.user.nip_karyawan } });
@@ -119,6 +122,18 @@ const getAllUsers = asyncHandler(async (req, res) => {
     })
 })
 
+const deleteUser = asyncHandler(async (req, res) => {
+    const nipKaryawan = req.params.nip_karyawan;
+    const userFound = await User.findByPk(nipKaryawan);
+    if (userFound) {
+        await userFound.destroy();
+        res.status(200).json({ message: 'User berhasil dihapus' });
+    } else {
+        res.status(404);
+        throw new Error('User tidak ditemukan');
+    }
+})
+
 const uploadPhoto = asyncHandler(async (req, res) => {
     const stream = cloudinary.uploader.upload_stream({
         folder: "profile",
@@ -140,4 +155,4 @@ const uploadPhoto = asyncHandler(async (req, res) => {
     streamifier.createReadStream(req.file.buffer).pipe(stream);
 })
 
-module.exports = { registerUser, loginUser, getUserById, logoutUser, getAllUsers, updateUser, uploadPhoto };
+module.exports = { registerUser, loginUser, getUserById, logoutUser, getAllUsers, updateUser, uploadPhoto, deleteUser };
