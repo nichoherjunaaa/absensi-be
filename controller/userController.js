@@ -43,9 +43,14 @@ const registerUser = asyncHandler(async (req, res) => {
         // Cek apakah user pertama (jadikan admin)
         const userCount = await User.count();
         if (userCount === 0) {
-            role = 'dosen';
+            role = 'admin';
         }
 
+        // Cek apakah username sudah ada
+        const existingUser = await User.findOne({ where: { username } });
+        if (existingUser) {
+            return res.status(400).json({ message: 'Username sudah digunakan!' });
+        }
         // Buat user baru
         const user = await User.create({ username, password, role });
 
@@ -54,7 +59,7 @@ const registerUser = asyncHandler(async (req, res) => {
                 username: user.username,
                 role: user.role,
             },
-            token: generateToken(user.id),
+            // token: generateToken(user.id),
             message: "User berhasil dibuat",
         });
     } catch (error) {
