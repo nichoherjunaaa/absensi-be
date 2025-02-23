@@ -40,18 +40,17 @@ const registerUser = asyncHandler(async (req, res) => {
             return res.status(400).json({ message: 'Password harus minimal 6 karakter!' });
         }
 
-        // Cek apakah user pertama (jadikan admin)
+        // Cek apakah user pertama jadikan admin
         const userCount = await User.count();
         if (userCount === 0) {
             role = 'admin';
         }
 
-        // Cek apakah username sudah ada
         const existingUser = await User.findOne({ where: { username } });
         if (existingUser) {
             return res.status(400).json({ message: 'Username sudah digunakan!' });
         }
-        // Buat user baru
+        
         const user = await User.create({ username, password, role });
 
         res.status(201).json({
@@ -59,7 +58,6 @@ const registerUser = asyncHandler(async (req, res) => {
                 username: user.username,
                 role: user.role,
             },
-            // token: generateToken(user.id),
             message: "User berhasil dibuat",
         });
     } catch (error) {
@@ -117,7 +115,7 @@ const updateUser = asyncHandler(async (req, res) => {
         
 
         // Update data (hanya yang diberikan)
-        if (password) user.password = password; // Akan otomatis di-hash oleh hook `beforeUpdate`
+        if (password) user.password = password;
 
         await user.save();
 
