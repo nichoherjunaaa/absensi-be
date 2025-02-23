@@ -86,12 +86,11 @@ const loginUser = asyncHandler(async (req, res) => {
         // Cek password dengan metode dari model
         const isMatch = await user.comparePassword(password);
         if (!isMatch) {
-            return res.status(401).json({ message: 'Password salah' });
+            return res.status(401).json({ message: 'Username atau Password salah' });
         }
 
         res.status(200).json({
             data: {
-                id: user.id,
                 username: user.username,
                 role: user.role,
             },
@@ -106,29 +105,28 @@ const loginUser = asyncHandler(async (req, res) => {
 // Update User
 const updateUser = asyncHandler(async (req, res) => {
     try {
-        const { id } = req.params;
-        const { username, password, role } = req.body;
+        const { username } = req.params;
+        const { password } = req.body;
+        console.log(username);
 
         // Cek apakah user ada
-        const user = await User.findByPk(id);
+        const user = await User.findByPk(username);
         if (!user) {
             return res.status(404).json({ message: 'User tidak ditemukan' });
         }
+        
 
         // Update data (hanya yang diberikan)
-        if (username) user.username = username;
-        if (role) user.role = role;
         if (password) user.password = password; // Akan otomatis di-hash oleh hook `beforeUpdate`
 
         await user.save();
 
         res.status(200).json({
             data: {
-                id: user.id,
                 username: user.username,
                 role: user.role,
             },
-            message: "User berhasil diperbarui",
+            message: "Password berhasil diperbarui",
         });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -138,10 +136,10 @@ const updateUser = asyncHandler(async (req, res) => {
 // Delete User
 const deleteUser = asyncHandler(async (req, res) => {
     try {
-        const { id } = req.params;
-
+        const { username } = req.params;
+        console.log(username);
         // Cek apakah user ada
-        const user = await User.findByPk(id);
+        const user = await User.findByPk(username);
         if (!user) {
             return res.status(404).json({ message: 'User tidak ditemukan' });
         }
