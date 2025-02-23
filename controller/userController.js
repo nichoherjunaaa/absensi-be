@@ -105,7 +105,7 @@ const updateUser = asyncHandler(async (req, res) => {
     try {
         const { username } = req.params;
         const { password } = req.body;
-        console.log(username);
+        // console.log(username);
 
         // Cek apakah user ada
         const user = await User.findByPk(username);

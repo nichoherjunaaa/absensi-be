@@ -3,9 +3,9 @@ const { getDataMahasiswa, getDataById, addDataMahasiswa, updateDataMahasiswa, de
 const router = express.Router()
 
 router.get('/', getDataMahasiswa);
-router.get('/:username', getDataById);
+router.get('/:nim', getDataById);
 router.post('/', addDataMahasiswa);
-router.put('/:username', updateDataMahasiswa);
-router.delete('/:username', deleteMahasiswa);
+router.put('/:nim', updateDataMahasiswa);
+router.delete('/:nim', deleteMahasiswa);
 
 module.exports = router

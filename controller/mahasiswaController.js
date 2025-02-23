@@ -15,8 +15,8 @@ const getDataMahasiswa = asyncHandler(async (req, res) => {
 });
 
 const getDataById = asyncHandler(async (req, res) => {
-    const { username } = req.params;
-    const mahasiswa = await Mahasiswa.findByPk(username);
+    const { nim } = req.params;
+    const mahasiswa = await Mahasiswa.findByPk(nim);
 
     if (!mahasiswa) {
         return res.status(404).json({ message: 'Mahasiswa tidak ditemukan' });
@@ -50,12 +50,41 @@ const addDataMahasiswa = asyncHandler(async (req, res) => {
 });
 
 const updateDataMahasiswa = asyncHandler(async (req, res) => {
-    res.status(200).json({ message: 'Success' });
+    const {nim} = req.params;
+    const {nama, program_studi, angkatan } = req.body;
 
+    const mhs = await Mahasiswa.findByPk(nim);
+
+    if (!mhs) {
+        return res.status(404).json({ message: 'Mahasiswa tidak ditemukan' });
+    }
+
+    if (nama) mhs.nama = nama;
+    if (program_studi) mhs.program_studi = program_studi;
+    if (angkatan) mhs.angkatan = angkatan;
+
+    await mhs.save();
+
+    res.status(200).json({
+        data : mhs,
+        message: "Update Success",
+    })
 });
 
 const deleteMahasiswa = asyncHandler(async (req, res) => {
-    res.status(200).json({ message: 'Success' });
+    const {nim} = req.params;
+
+    const mhs = await Mahasiswa.findByPk(nim);
+
+    if (!mhs) {
+        return res.status(404).json({ message: 'Mahasiswa tidak ditemukan' });
+    }
+
+    await mhs.destroy();
+
+    res.status(200).json({
+        message: "Delete Success",
+    })
 });
 
 module.exports = {
