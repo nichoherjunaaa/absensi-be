@@ -27,6 +27,8 @@ app.get('/', (req, res) => {
     res.send('API ready!')
 })
 
+app.use('/api/v1/auth', userRouter)
+
 app.use(notFound)
 app.use(errorHandler)
 
