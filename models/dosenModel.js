@@ -16,7 +16,7 @@ const Dosen = sequelize.define('Dosen', {
         allowNull: false,
     },
     bidang_keahlian: {
-        type: DataTypes.STRING(100),
+        type: DataTypes.JSON,
         allowNull: false,
     }
 }, {
