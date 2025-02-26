@@ -5,9 +5,11 @@ const PORT = process.env.PORT || 3001
 const sqlConnection = require('./config/sqlConnect')
 const { notFound, errorHandler } = require('./middleware/errorHandler')
 // const cloudinary = require('cloudinary').v2;
+
 // router
 const userRouter = require('./route/userRoute')
 const mahasiswaRouter = require('./route/mahasiswaRoute')
+const dosenRouter = require('./route/dosenRoute')
 const app = express()
 
 
@@ -30,6 +32,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/v1/auth', userRouter)
 app.use('/api/v1/mahasiswa', mahasiswaRouter)
+app.use('/api/v1/dosen', dosenRouter)
 
 app.use(notFound)
 app.use(errorHandler)

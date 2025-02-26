@@ -1,6 +1,8 @@
 const Mahasiswa = require('../models/mahasiswaModel');
 const asyncHandler = require('express-async-handler');
 
+
+
 const getDataMahasiswa = asyncHandler(async (req, res) => {
     const mahasiswa = await Mahasiswa.findAll();
 
