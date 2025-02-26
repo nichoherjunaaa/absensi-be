@@ -10,6 +10,7 @@ const { notFound, errorHandler } = require('./middleware/errorHandler')
 const userRouter = require('./route/userRoute')
 const mahasiswaRouter = require('./route/mahasiswaRoute')
 const dosenRouter = require('./route/dosenRoute')
+const biodataRouter = require('./route/biodataRoute')
 const app = express()
 
 
@@ -33,6 +34,7 @@ app.get('/', (req, res) => {
 app.use('/api/v1/auth', userRouter)
 app.use('/api/v1/mahasiswa', mahasiswaRouter)
 app.use('/api/v1/dosen', dosenRouter)
+app.use('/api/v1/biodata', biodataRouter)
 
 app.use(notFound)
 app.use(errorHandler)
