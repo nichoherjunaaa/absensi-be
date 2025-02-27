@@ -19,11 +19,30 @@ const createMatkul = asyncHandler(async (req, res) => {
 })
 
 const getAllMatkul = asyncHandler(async (req, res) => {
-    res.send("Get All Matkul")
+    const matkul = await MataKuliah.findAll()
+    if(!matkul){
+        return res.status(404).json({
+            message: "Tidak ada data !"
+        })
+    }
+    return res.status(200).json({
+        data: matkul,
+        message: "Success Get All Matkul"
+    })
 })
 
 const getMatkulById = asyncHandler(async (req, res) => {
-    res.send("Get Matkul By Id")
+    const {id} = req.params
+    const matkul = await MataKuliah.findByPk(id)
+    if(!matkul){
+        return res.status(404).json({
+            message: "Data tidak ditemukan !"
+        })
+    }
+    return res.status(200).json({
+        data: matkul,
+        message: "Mata Kuliah ditemukan"
+    })
 })
 
 const updateMatkul = asyncHandler(async (req, res) => {
