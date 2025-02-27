@@ -70,7 +70,6 @@ const updateBiodata = asyncHandler(async (req, res) => {
 
 const getBiodataById = async (req, res) => {
     const { id } = req.params;
-    console.log(id);
     const biodata = await Biodata.findByPk(id);
     if (!biodata) {
         return res.status(404).json({
