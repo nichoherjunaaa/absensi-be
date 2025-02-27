@@ -20,9 +20,9 @@ const createMatkul = asyncHandler(async (req, res) => {
 
 const getAllMatkul = asyncHandler(async (req, res) => {
     const matkul = await MataKuliah.findAll()
-    if(!matkul){
+    if(matkul.length === 0){
         return res.status(404).json({
-            message: "Tidak ada data !"
+            message: "Tidak ada data Mata Kuliah!"
         })
     }
     return res.status(200).json({
@@ -50,7 +50,17 @@ const updateMatkul = asyncHandler(async (req, res) => {
 })
 
 const deleteMatkul = asyncHandler(async (req, res) => {
-    res.send("Delete Matkul")
+    const {id} = req.params
+    const matkul = await MataKuliah.findByPk(id)
+    if(!matkul){
+        return res.status(404).json({
+            message: "Data tidak ditemukan !"
+        })
+    }
+    await matkul.destroy()
+    return res.status(200).json({
+        message: "Data berhasil dihapus"
+    })
 })
 
 module.exports = {
