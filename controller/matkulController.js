@@ -1,7 +1,21 @@
 const MataKuliah = require('../models/matkulModel')
 const asyncHandler = require('express-async-handler')
+
 const createMatkul = asyncHandler(async (req, res) => {
-    res.send("Create Matkul")
+    const { kode_mk, nama_mk, sks } = req.body
+    const existingMatkul = await MataKuliah.findOne({ where: { kode_mk } })
+    if (existingMatkul) {
+        return res.status(400).json({ message: 'Mata Kuliah sudah terdaftar !' })
+    }
+    const matkul = await MataKuliah.create({
+        kode_mk,
+        nama_mk,
+        sks
+    })
+    return res.status(201).json({
+        data: matkul,
+        message: "Success Create Matkul"
+    })
 })
 
 const getAllMatkul = asyncHandler(async (req, res) => {
