@@ -2,13 +2,9 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../config/sqlConnect');
 
 const Biodata = sequelize.define('Biodata', {
-    id_biodata: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-    },
     username: {
         type: DataTypes.STRING(50),
+        primaryKey: true, // Jadikan primary key
         allowNull: false,
         references: {
             model: 'users',

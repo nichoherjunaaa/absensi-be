@@ -26,7 +26,7 @@ app.use(express.json())
 sqlConnection.authenticate()
     .then(() => console.log('Database Connected'))
     .catch((err) => console.log('database error: ' + err))
-
+    
 app.get('/', (req, res) => {
     res.send('API ready!')
 })
