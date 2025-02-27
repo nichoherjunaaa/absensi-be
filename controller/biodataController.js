@@ -85,12 +85,31 @@ const getBiodataById = async (req, res) => {
 
 const getAllBiodata = asyncHandler(async(req,res) => {
     const biodata = await Biodata.findAll();
+    if(!biodata){
+        return res.status(404).json({
+            message: "Tidak ada data !"
+        })
+    }
     res.status(200).json({
         data: biodata,
         message: "Success get all biodata"
     })
 })
 
+const deleteBiodata = asyncHandler(async(req,res) => {
+    const { id } = req.params;
+    const biodata = await Biodata.findByPk(id);
+    if(!biodata){
+        return res.status(404).json({
+            message: "Data tidak ditemukan !"
+        })
+    }
+    await biodata.destroy();
+    res.status(200).json({
+        message: "Data berhasil dihapus"
+    })
+})
+
 module.exports = {
-    createBiodata, updateBiodata, getBiodataById, getAllBiodata
+    createBiodata, updateBiodata, getBiodataById, getAllBiodata, deleteBiodata
 }
