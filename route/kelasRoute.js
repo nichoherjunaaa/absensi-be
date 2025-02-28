@@ -5,7 +5,7 @@ const router = express.Router()
 
 router.get('/', getAllKelas)
 router.get('/:id', getKelasByUser)
-router.put('/', updateKelas)
+router.put('/:id', updateKelas)
 router.post('/', createKelas)
 router.delete('/:id', deleteKelas)
 
