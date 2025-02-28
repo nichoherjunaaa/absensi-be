@@ -12,6 +12,7 @@ const mahasiswaRouter = require('./route/mahasiswaRoute')
 const dosenRouter = require('./route/dosenRoute')
 const biodataRouter = require('./route/biodataRoute')
 const matkulRouter = require('./route/matkulRoute')
+const kelasRouter = require('./route/kelasRoute')
 const app = express()
 
 
@@ -37,6 +38,7 @@ app.use('/api/v1/mahasiswa', mahasiswaRouter)
 app.use('/api/v1/dosen', dosenRouter)
 app.use('/api/v1/biodata', biodataRouter)
 app.use('/api/v1/matkul', matkulRouter)
+app.use('/api/v1/kelas', kelasRouter)
 
 app.use(notFound)
 app.use(errorHandler)
