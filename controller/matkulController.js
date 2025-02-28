@@ -20,7 +20,7 @@ const createMatkul = asyncHandler(async (req, res) => {
 
 const getAllMatkul = asyncHandler(async (req, res) => {
     const matkul = await MataKuliah.findAll()
-    if(matkul.length === 0){
+    if (matkul.length === 0) {
         return res.status(404).json({
             message: "Tidak ada data Mata Kuliah!"
         })
@@ -32,9 +32,9 @@ const getAllMatkul = asyncHandler(async (req, res) => {
 })
 
 const getMatkulById = asyncHandler(async (req, res) => {
-    const {id} = req.params
+    const { id } = req.params
     const matkul = await MataKuliah.findByPk(id)
-    if(!matkul){
+    if (!matkul) {
         return res.status(404).json({
             message: "Data tidak ditemukan !"
         })
@@ -46,13 +46,27 @@ const getMatkulById = asyncHandler(async (req, res) => {
 })
 
 const updateMatkul = asyncHandler(async (req, res) => {
-    res.send("Update Matkul")
+    const { id } = req.params
+    const {nama_mk, sks } = req.body
+    const matkul = await MataKuliah.findByPk(id)
+    if (!matkul) {
+        return res.status(404).json({
+            message: "Data tidak ditemukan !"
+        })
+    }
+    matkul.nama_mk = nama_mk || matkul.nama_mk
+    matkul.sks = sks || matkul.sks
+    await matkul.save()
+    return res.status(200).json({
+        data: matkul,
+        message: "Success Update Matkul"
+    })
 })
 
 const deleteMatkul = asyncHandler(async (req, res) => {
-    const {id} = req.params
+    const { id } = req.params
     const matkul = await MataKuliah.findByPk(id)
-    if(!matkul){
+    if (!matkul) {
         return res.status(404).json({
             message: "Data tidak ditemukan !"
         })
