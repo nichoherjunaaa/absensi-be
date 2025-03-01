@@ -1,5 +1,6 @@
 const Kelas = require('../models/kelasModel')
 const asyncHandler = require('express-async-handler')
+
 const getAllKelas = asyncHandler(async (req, res) => {
     const kelas = await Kelas.findAll()
     if (kelas.length === 0) {
@@ -15,7 +16,7 @@ const getAllKelas = asyncHandler(async (req, res) => {
 
 const updateKelas = async (req, res) => {
     const { id } = req.params
-    const {kode_mk, nidn, semester, tahun_ajaran, jadwal } = req.body
+    const { kode_mk, nidn, semester, tahun_ajaran, jadwal } = req.body
     const kelas = await Kelas.findByPk(id)
     if (!kelas) {
         return res.status(404).json({
@@ -36,7 +37,17 @@ const updateKelas = async (req, res) => {
 }
 
 const deleteKelas = async (req, res) => {
-    res.send('deleteKelas')
+    const { id } = req.params
+    const kelas = await Kelas.findByPk(id)
+    if (!kelas) {
+        return res.status(404).json({
+            message: "Data tidak ditemukan !"
+        })
+    }
+    kelas.destroy()
+    res.status(200).json({
+        message: "Kelas berhasil dihapus !"
+    })
 }
 
 const createKelas = async (req, res) => {
@@ -59,7 +70,7 @@ const createKelas = async (req, res) => {
 }
 
 const getKelasByUser = async (req, res) => {
-    res.send('getKelasByUser')
+    res.send("get kelas by user")
 }
 
 module.exports = { getAllKelas, updateKelas, deleteKelas, createKelas, getKelasByUser }
