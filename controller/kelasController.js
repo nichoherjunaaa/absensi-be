@@ -70,7 +70,17 @@ const createKelas = async (req, res) => {
 }
 
 const getKelasByUser = async (req, res) => {
-    res.send("get kelas by user")
+    const { id } = req.params
+    const kelas = await Kelas.findAll({ where: { nidn: id } })
+    if (kelas.length === 0) {
+        return res.status(404).json({
+            message: "Tidak ada data Kelas!"
+        })
+    }
+    res.status(200).json({
+        data: kelas,
+        message: "Success Get All Kelas"
+    })
 }
 
 module.exports = { getAllKelas, updateKelas, deleteKelas, createKelas, getKelasByUser }
