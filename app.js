@@ -14,9 +14,8 @@ const biodataRouter = require('./route/biodataRoute')
 const matkulRouter = require('./route/matkulRoute')
 const kelasRouter = require('./route/kelasRoute')
 const krsRouter = require('./route/krsRoute')
+const kehadiranRouter = require('./route/kehadiranRoute')
 const app = express()
-
-
 
 // cloudinary.config({
 //     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -41,6 +40,7 @@ app.use('/api/v1/biodata', biodataRouter)
 app.use('/api/v1/matkul', matkulRouter)
 app.use('/api/v1/kelas', kelasRouter)
 app.use('/api/v1/krs', krsRouter)
+app.use('/api/v1/kehadiran', kehadiranRouter)
 
 app.use(notFound)
 app.use(errorHandler)
