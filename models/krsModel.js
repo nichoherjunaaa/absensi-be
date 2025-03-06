@@ -20,6 +20,14 @@ const KRS = sequelize.define('KRS', {
             model: 'kelas',
             key: 'id_kelas'
         }
+    },
+    semester: {
+        type: DataTypes.STRING(20),
+        allowNull: false,
+    },
+    tahun_ajaran: {
+        type: DataTypes.STRING(20),
+        allowNull: false,
     }
 }, {
     tableName: 'krs',
