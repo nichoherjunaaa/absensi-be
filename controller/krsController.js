@@ -14,7 +14,7 @@ const addKrs = async (req, res) => {
         id_kelas,
         semester,
         tahun_ajaran
-        
+
     })
     res.status(201).json({
         data: krs,
@@ -24,7 +24,7 @@ const addKrs = async (req, res) => {
 
 const getKrs = async (req, res) => {
     const krs = await KRS.findAll()
-    if(krs.length === 0) {
+    if (krs.length === 0) {
         return res.status(404).json({
             message: "Tidak ada data KRS!"
         })
@@ -40,7 +40,18 @@ const updateKrs = async (req, res) => {
 }
 
 const deleteKrs = async (req, res) => {
-    res.send('delete krs')
+    // res.send('delete krs')
+    const { id } = req.params
+    const krs = await KRS.findByPk(id)
+    if (!krs) {
+        return res.status(404).json({
+            message: "Data tidak ditemukan !"
+        })
+    }
+    await krs.destroy()
+    res.status(200).json({
+        message: "Data berhasil dihapus"
+    })
 }
 
 const getKrsByUser = async (req, res) => {
