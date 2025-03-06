@@ -3,8 +3,30 @@ const asyncHandler = require('express-async-handler');
 const jwt = require('jsonwebtoken');
 
 // Generate JWT Token
-const generateToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+const signToken = (id) => {
+    return jwt.sign({ id }, process.env.JWT_SECRET, {
+        expiresIn: '6d'
+    });
+};
+
+const createSendResToken = (user, statusCode, res) => {
+    const token = signToken(user._id);
+    const isDev = process.env.NODE_ENV === 'development' ? false : true;
+
+    const cookieOptions = {
+        expires: new Date(Date.now() + 6 * 24 * 60 * 60 * 1000),
+        httpOnly: true,
+        secure: isDev
+    };
+
+    res.cookie('jwt', token, cookieOptions);
+    user.password = undefined;
+
+    res.status(statusCode).json({
+        status: 'success',
+        token,
+        data: user
+    });
 };
 
 // Get All Users
@@ -50,7 +72,7 @@ const registerUser = asyncHandler(async (req, res) => {
         if (existingUser) {
             return res.status(400).json({ message: 'Username sudah digunakan!' });
         }
-        
+
         const user = await User.create({ username, password, role });
 
         res.status(201).json({
@@ -82,19 +104,11 @@ const loginUser = asyncHandler(async (req, res) => {
         }
 
         // Cek password dengan metode dari model
-        const isMatch = await user.comparePassword(password);
-        if (!isMatch) {
-            return res.status(401).json({ message: 'Username atau Password salah' });
+        if (user && await user.comparePassword(password)) {
+            createSendResToken(user, 200, res);
+        } else {
+            return res.status(401).json({ message: 'Username atau Password salah !' });
         }
-
-        res.status(200).json({
-            data: {
-                username: user.username,
-                role: user.role,
-            },
-            token: generateToken(user.id),
-            message: "Login berhasil",
-        });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -112,7 +126,7 @@ const updateUser = asyncHandler(async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: 'User tidak ditemukan' });
         }
-        
+
 
         // Update data (hanya yang diberikan)
         if (password) user.password = password;

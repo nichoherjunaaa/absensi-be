@@ -5,7 +5,7 @@ const router = express.Router()
 
 
 router.get('/', getKrs)
-router.post('/', authenticateToken, addKrs)
+router.post('/', addKrs)
 router.put('/:id', updateKrs)
 router.delete('/:id', deleteKrs)
 router.get('/:id', getKrsByUser)

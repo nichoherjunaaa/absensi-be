@@ -55,7 +55,7 @@ const updateDosen = asyncHandler(async (req, res, next) => {
         if (!dosen) {
             return res.status(404).json({ message: "Dosen tidak ditemukan" });
         }
-
+        
         // Update data dosen
         dosen.nama = nama || dosen.nama;
         dosen.bidang_keahlian = bidang_keahlian || dosen.bidang_keahlian;
