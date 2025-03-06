@@ -55,7 +55,17 @@ const deleteKrs = async (req, res) => {
 }
 
 const getKrsByUser = async (req, res) => {
-    res.send('get krs by user')
+    const { id } = req.params
+    const krs = await KRS.findAll({ where: { nim :id } })
+    if (krs.length === 0) {
+        return res.status(404).json({
+            message: "Tidak ada data KRS!"
+        })
+    }
+    res.status(200).json({
+        data: krs,
+        message: "Berhasil mengambil data KRS !"
+    })
 }
 
 module.exports = {
